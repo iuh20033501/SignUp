@@ -11,9 +11,10 @@ const Authentication = ({ navigation, route }) => {
   const [isContinueEnabled, setIsContinueEnabled] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
   const [failureModalVisible, setFailureModalVisible] = useState(false);
-
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [successRequest, setSuccessRequest] = useState(false);
+ 
   const isCodeComplete = verificationCode.replace(/\s/g, '').length === 6;
-
   const handleSubmit = async () => {
     try {
       const requestBody = {
@@ -34,23 +35,71 @@ const Authentication = ({ navigation, route }) => {
       }
       const data = await response.json();
       const token = data.accessToken;
-      navigation.navigate('Register', { accessToken: token });
+      setSuccessModalVisible(true);
+      setTimeout(() => {
+        navigation.navigate('Register', { accessToken: token });
+      }, 1500);
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
-      setFailureModalVisible(true); // Hiển thị modal thông báo thất bại
+      setFailureModalVisible(true);
     }
   };
 
+  const RequestCodeAgain = () => {
+    const requestBody = {
+      phone: phoneNumber
+    };
 
+    fetch('http://localhost:8080/api/v1/verification/otp/sms/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.text();
+      })
+      .then(data => {
+        console.log(data);
+        setSuccessRequest(true)
+      })
+      .catch(error => {
+        setFailRequest(true);
+      });
+  };
+
+  const handleCloseModal2 = () => {
+    setSuccessRequest(false);
+  };
 
   const handleCloseModal = () => {
     setFailureModalVisible(false);
+    setSuccessModalVisible(false)
   };
 
   return (
     <View style={styles.container}>
+        {failureModalVisible && (
+        <TouchableWithoutFeedback onPress={() => handleCloseModal()}>
+          <View style={styles.overlay} />
+        </TouchableWithoutFeedback>
+      )}
+      {successModalVisible && (
+        <TouchableWithoutFeedback onPress={() => handleCloseModal()}>
+          <View style={styles.overlay} />
+        </TouchableWithoutFeedback>
+      )}
+      {successRequest && (
+        <TouchableWithoutFeedback onPress={() => handleCloseModal2()}>
+          <View style={styles.overlay} />
+        </TouchableWithoutFeedback>
+      )}
       <View style={{ marginLeft: 5 }}>
-        <ArrowIcon width={40} height={40} color="#1a1a1a" />
+        <TouchableOpacity onPress={() =>navigation.navigate('RegisterForm')}>   <ArrowIcon width={40} height={40} color="#1a1a1a" /></TouchableOpacity>
       </View>
 
       <View>
@@ -86,7 +135,7 @@ const Authentication = ({ navigation, route }) => {
 
       <View style={{ flexDirection: 'row', marginLeft: 80, marginTop: 20 }}>
         <Text>Bạn không nhận được mã?</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => RequestCodeAgain()}>
           <Text style={{ color: '#0867ef' }}> Gửi lại</Text>
         </TouchableOpacity>
       </View>
@@ -97,7 +146,22 @@ const Authentication = ({ navigation, route }) => {
           <Text style={{ color: '#0867ef', fontWeight: 'bold', fontSize: 15, textAlign: 'center' }}> Tôi cần hỗ trợ thêm về mã xác thực</Text>
         </TouchableOpacity>
       </View>
-     
+      {/* SUCCESS OTP */}
+      <Modal animationType="slide" transparent={true} visible={successModalVisible} onRequestClose={() => handleCloseModal()} >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent2}>
+            <Text style={{ fontSize: 20, textAlign: 'center', fontWeight: 'bold' }}>Nhập OTP thành công</Text>
+            <View style={styles.separator} />
+            <Text>• Hãy bắt đầu với việc đăng ký thông tin cá nhân</Text>
+            <Text>• Vui lòng tuân thủ các điều khoản của Zalo</Text>
+            <TouchableOpacity onPress={() => {
+              handleCloseModal();
+            }}>
+              <Text style={{ color: '#0867ef', textAlign: 'center', fontSize: 15, marginTop: 15 }}>Xác nhận</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* FAIL OTP */}
       <Modal animationType="fade" transparent={true} visible={failureModalVisible} onRequestClose={handleCloseModal}>
@@ -115,6 +179,23 @@ const Authentication = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
+{/* REQUEST MORE TIME */}
+      <Modal animationType="slide" transparent={true} visible={successRequest} onRequestClose={() => handleCloseModal2()} >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent2}>
+            <Text style={{ fontSize: 20, textAlign: 'center', fontWeight: 'bold' }}>Đã gửi lại mã OTP</Text>
+            <View style={styles.separator} />
+            <Text>• Kiểm tra mã OTP trên số điện thoại của bạn</Text>
+            <Text>• Đảm bảo rằng số điện thoại của bạn vẫn còn hoạt động</Text>
+            <TouchableOpacity onPress={() => {
+              handleCloseModal2();
+            }}>
+              <Text style={{ color: '#0867ef', textAlign: 'center', fontSize: 15, marginTop: 15 }}>Xác nhận</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 };
@@ -170,7 +251,7 @@ const styles = StyleSheet.create({
   },
   modalContent2: {
     width: 250,
-    height: 200,
+    height: 240,
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
@@ -190,6 +271,10 @@ const styles = StyleSheet.create({
     borderBottomColor: 'black',
     marginVertical: 10,
     marginTop: 20
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)'
   },
 });
 
