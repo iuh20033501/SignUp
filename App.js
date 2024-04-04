@@ -1,20 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { SafeAreaView } from 'react-native';
+import RegisterForm from '../SignUp/screens/RegisterForm';
+import Authentication from './screens/Authentication';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import SettingScreen from './screens/SettingScreen';
+import FindScren from './screens/FindScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import Register from './screens/Register';
 
-export default function App() {
+const App = () => {
+  const stack = createNativeStackNavigator();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+    <stack.Navigator initialRouteName='Home' options={{headerShown:false}}>
+      <stack.Screen name = 'RegisterForm' component={RegisterForm}  options={{ headerShown: false }}/>
+      <stack.Screen name = 'Authentication' component={Authentication}  options={{ headerShown: false }}/>
+      <stack.Screen name = 'Register' component={Register}  options={{ headerShown: false }}/>
+    </stack.Navigator>
+   </NavigationContainer>
+  // <Authentication></Authentication>
+  // <SettingScreen></SettingScreen>
+  // <FindScren></FindScren>
+  // <RegisterForm></RegisterForm>
+  // <ProfileScreen></ProfileScreen>
+  // <Register></Register>
+  
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
