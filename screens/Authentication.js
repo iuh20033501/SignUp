@@ -22,7 +22,7 @@ const Authentication = ({ navigation, route }) => {
         otp: verificationCode
       };
 
-      const response = await fetch('http://localhost:8080/api/v1/verification/otp/sms/validate', {
+      const response = await fetch('http://192.168.105.10:8080/api/v1/verification/otp/sms/validate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -50,7 +50,7 @@ const Authentication = ({ navigation, route }) => {
       phone: phoneNumber
     };
 
-    fetch('http://localhost:8080/api/v1/verification/otp/sms/send', {
+    fetch('http://192.168.105.10:8080/api/v1/verification/otp/sms/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

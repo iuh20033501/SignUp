@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity, Modal, TouchableWithoutFeedba
 import ArrowIcon from '../assets/icon/ArrowIcon';
 import PhoneInput from 'react-native-phone-input';
 import { CheckBox } from 'react-native';
+// import { CheckBox } from 'react-native-elements';
 
 const RegisterForm = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -45,7 +46,7 @@ const RegisterForm = ({ navigation }) => {
       phone: phoneNumber
     };
 
-    fetch('http://localhost:8080/api/v1/verification/otp/sms/send', {
+    fetch('http://192.168.105.10:8080/api/v1/verification/otp/sms/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -124,7 +125,7 @@ const RegisterForm = ({ navigation }) => {
       </View>
 
       <View style={{ flexDirection: 'row', marginTop: 10, marginLeft: 50 }}>
-        <CheckBox value={isChecked} onValueChange={value => setIsChecked(value)} />
+        <CheckBox size={15} value={isChecked} onValueChange={value => setIsChecked(value)} />
         <View>
           <Text style={{ color: '#1a1a1a', marginTop: -2 }}> Tôi đồng ý với các</Text>
         </View>
@@ -134,7 +135,7 @@ const RegisterForm = ({ navigation }) => {
       </View>
 
       <View style={{ flexDirection: 'row', marginTop: 10, marginLeft: 50 }}>
-        <CheckBox value={isChecked2} onValueChange={value => setIsChecked2(value)} />
+        <CheckBox size={15} value={isChecked2} onValueChange={value => setIsChecked2(value)} />
         <View>
           <Text style={{ color: '#1a1a1a', marginTop: -2 }}> Tôi đồng ý với </Text>
         </View>
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: '#1a1a1a',
     fontWeight: 'bold',
-    marginLeft: 46
+    marginLeft: 60
   },
   phoneInputContainer: {
     marginLeft: 45,
@@ -296,6 +297,10 @@ const styles = StyleSheet.create({
     right: 10,
     width: 10,
     height: 10
+  },
+  checkboxS:{
+    width:10,
+    height:10,
   }
 });
 

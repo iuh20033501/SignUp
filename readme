@@ -1,0 +1,19 @@
+npm install react-native-fs
+
+npm install react-native-image-picker
+
+Đảm bảo rằng bạn đã cài đặt CocoaPods bằng cách chạy lệnh sau trong thư mục ios của dự án:
+
+pod init
+Mở file ios/Podfile và thêm dòng sau vào phần target của ứng dụng:
+
+pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+Lưu và đóng file Podfile, sau đó chạy lệnh sau để cài đặt các thay đổi:
+
+pod install
+Mở file Info.plist trong thư mục ios/{Tên ứng dụng}/Info.plist và thêm các key sau:
+
+<key>NSPhotoLibraryUsageDescription</key>
+<string>$(PRODUCT_NAME) needs access to your photo library</string>
+<key>NSCameraUsageDescription</key>
+<string>$(PRODUCT_NAME) needs access to your camera</string>

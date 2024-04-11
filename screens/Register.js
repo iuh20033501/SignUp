@@ -32,7 +32,7 @@ const Register = ({ navigation, route }) => {
       password: password
     };
 
-    await fetch('http://localhost:8080/api/v1/auth/register', {
+    await fetch('http://192.168.105.10:8080/api/v1/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
