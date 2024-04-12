@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Avatar } from 'react-native-elements';
 import ArrowIcon from '../assets/icon/ArrowIcon';
 
-const FindScreen = ({navigation,route}) => {
+const FindScreen = ({ navigation, route }) => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [searchHistory, setSearchHistory] = useState([]);
   const [data, setData] = useState();
@@ -23,19 +23,19 @@ const FindScreen = ({navigation,route}) => {
     setSearchHistory([]);
   };
 
-  const getUserProfile =  (phoneNumber) => {
+  const getUserProfile = (phoneNumber) => {
     try {
-         axios.get(`http://192.168.1.9:8080/api/v1/users/profile/${phoneNumber}`).then((res) => {
-            const data = res.data;
-            console.log('Thông tin người dùng:', data);
-            setData(data);
-        }).catch((error) => {
-            console.log(error)
-        });
+      axios.get(`http://192.168.1.9:8080/api/v1/users/profile/${phoneNumber}`).then((res) => {
+        const data = res.data;
+        console.log('Thông tin người dùng:', data);
+        setData(data);
+      }).catch((error) => {
+        console.log(error)
+      });
     } catch (error) {
-        console.error(error.message);
+      console.error(error.message);
     }
-}
+  }
   return (
     <ScrollView style={styles.container}>
       {/* Navbar */}
@@ -70,7 +70,7 @@ const FindScreen = ({navigation,route}) => {
         </TouchableOpacity>
       </View>
       <View>
-      {/* navigation.navigate('DetailProfile', { data: data }) */}
+        {/* navigation.navigate('DetailProfile', { data: data }) */}
         {data && (
           <View style={styles.userDataContainer}>
             <View style={{
@@ -87,22 +87,23 @@ const FindScreen = ({navigation,route}) => {
                   source={require('../assets/icon/close.png')}
                   style={styles.closeIcon}
                 />
-              </TouchableOpacity>
+              </TouchableOpacity >
             </View>
-            <TouchableOpacity onPress={()=>navigation.navigate('ResultFindProfile', { data: data, phoneNumber: phoneNumber }) }>
-            <Avatar
-              size={100}
-              rounded={true}
-              source={thumbnailAvatar ? { uri: thumbnailAvatar } : defaultAvatar}
-            />
-            <View>
-              <Text style={styles.userDataText}>{data.firstName} {data.lastName}</Text>
-
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ color: '#7f7f7f', marginLeft: 10 }}>Số điện thoại: </Text>
-                <Text style={{ color: '#00aeef' }}>{phoneNumber}</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('ResultFindProfile', { data: data, phoneNumber: phoneNumber })}>
+              <View style={{ flexDirection: 'row' }}>
+                <Avatar
+                  size={100}
+                  rounded={true}
+                  source={thumbnailAvatar ? { uri: thumbnailAvatar } : defaultAvatar}
+                />
+                <View>
+                  <Text style={styles.userDataText}>{data.firstName} {data.lastName}</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ color: '#7f7f7f', marginLeft: 10 }}>Số điện thoại: </Text>
+                    <Text style={{ color: '#00aeef' }}>{phoneNumber}</Text>
+                  </View>
+                </View>
               </View>
-            </View>
             </TouchableOpacity>
           </View>
         )}

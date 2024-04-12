@@ -30,9 +30,9 @@ const ResultFindProfile = ({ navigation, route }) => {
                 style={styles.coverPhoto}
             />
 
-            {/* <TouchableOpacity style={styles.Button}>
+            <TouchableOpacity style={[styles.Button, styles.FisrtRightButton]} on onPress={()=> navigation.navigate('FindScreen')}>
                 <ArrowIcon width={30} height={30} color="#1a1a1a" />
-            </TouchableOpacity> */}
+            </TouchableOpacity>
 
             <TouchableOpacity style={[styles.Button, styles.SecondRightButton]} onPress={() => setMoreInfor(true)}>
                 <Image
