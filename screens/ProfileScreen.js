@@ -8,7 +8,7 @@ import { RadioButton } from "react-native-paper";
 
 // import { launchImageLibrary } from 'react-native-image-picker';
 // import * as DocumentPicker from 'expo-document-picker';
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({ navigation,route }) => {
     const [data, setData] = useState();
     const [coverPhoto, setCoverPhoto] = useState(require("../assets/profileTest/wall3.jpg"));
     const [phoneNumber, setPhoneNumber] = useState('0929635572');
@@ -23,20 +23,27 @@ const ProfileScreen = ({ navigation }) => {
     const [editInformation, setEditInformation] = useState(false);
     const [canEditInformation, setCanEditInformation] = useState(false);
     const [click, setClick] = useState(false)
-    const defaultAvatar = require('../assets/profileTest/avatar.jpg')
+    const defaultAvatar = require('../assets/profileTest/defaultAVT.jpg')
     const [coverImg, setCoverImg] = useState();
-    useEffect(() => {
-        getUserProfile();
-    }, [firstName, lastName, gender, phoneNumber, birthday]);
+    const [profileData, setProfileData] = useState(null);
 
     // const clickMouse = () => {
     //     if (click === false) setClick(true);
     //     else setShowAvatarOptions(false)
     // };
+    
+    useEffect(() => {
+        getUserProfile();
+    }, [profileData]);
 
-    const getUserProfile = () => {
+    useEffect(() => {
+        if (route.params && route.params.updatedData) {
+          setProfileData(route.params.updatedData);
+        }
+      }, [route.params]);
+    const getUserProfile =  () => {
         try {
-            axios.get(`http://192.168.105.10:8080/api/v1/users/profile/${phoneNumber}`).then((res) => {
+             axios.get(`http://192.168.1.9:8080/api/v1/users/profile/${phoneNumber}`).then((res) => {
                 const data = res.data;
                 console.log('Thông tin người dùng:', data);
                 setData(data);
@@ -52,6 +59,7 @@ const ProfileScreen = ({ navigation }) => {
             console.error(error.message);
         }
     }
+
     // const selectImage = async () => {
     //     let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -73,46 +81,46 @@ const ProfileScreen = ({ navigation }) => {
     //     }
     //   };
 
-    const uploadImage = async () => {
-        try {
-            let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                aspect: [1, 1],
-                quality: 1,
-            });
+    // const uploadImage = async () => {
+    //     try {
+    //         let result = await ImagePicker.launchImageLibraryAsync({
+    //             mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    //             allowsEditing: true,
+    //             aspect: [1, 1],
+    //             quality: 1,
+    //         });
 
-            // Kiểm tra xem người dùng đã chọn hình ảnh chưa
-            if (!result.cancelled) {
-                // Tạo FormData để chứa hình ảnh
-                const formData = new FormData();
-                formData.append('avatar', {
-                    uri: result.uri,
-                    name: 'avatar.jpg',
-                    type: 'image/jpg',
-                });
+    //         // Kiểm tra xem người dùng đã chọn hình ảnh chưa
+    //         if (!result.cancelled) {
+    //             // Tạo FormData để chứa hình ảnh
+    //             const formData = new FormData();
+    //             formData.append('avatar', {
+    //                 uri: result.uri,
+    //                 name: 'avatar.jpg',
+    //                 type: 'image/jpg',
+    //             });
 
-                // Gửi yêu cầu tải lên hình ảnh
-                const response = await axios.post(
-                    'http://192.168.144.10:8080/api/v1/user/profile/upload-avatar',
-                    formData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                        },
-                    }
-                );
+    //             // Gửi yêu cầu tải lên hình ảnh
+    //             const response = await axios.post(
+    //                 'http://192.168.1.9:8080/api/v1/user/profile/upload-avatar',
+    //                 formData,
+    //                 {
+    //                     headers: {
+    //                         'Content-Type': 'multipart/form-data',
+    //                     },
+    //                 }
+    //             );
 
-                console.log('Upload avatar response:', response.data);
-                setThumbnailAvatar(result.uri);
-            } else {
-                console.log('User cancelled image selection');
-            }
+    //             console.log('Upload avatar response:', response.data);
+    //             setThumbnailAvatar(result.uri);
+    //         } else {
+    //             console.log('User cancelled image selection');
+    //         }
 
-        } catch (error) {
-            console.error('Error uploading image:', error);
-        }
-    };
+    //     } catch (error) {
+    //         console.error('Error uploading image:', error);
+    //     }
+    // };
 
 
     const handleViewAvatar = () => {
@@ -129,9 +137,9 @@ const ProfileScreen = ({ navigation }) => {
                 style={styles.coverPhoto}
             />
 
-            <TouchableOpacity style={styles.Button}>
+            {/* <TouchableOpacity style={styles.Button}>
                 <ArrowIcon width={30} height={30} color="#1a1a1a" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity style={[styles.Button, styles.SecondRightButton]} onPress={() => setMoreInfor(true)}>
                 <Image
@@ -261,7 +269,7 @@ const ProfileScreen = ({ navigation }) => {
                             source={coverPhoto}
                             style={styles.coverPhoto}
                         />
-                        <TouchableOpacity style={styles.Button} onPress={() => setInformation(false)}>
+                        <TouchableOpacity style={[styles.Button, styles.FisrtRightButton]} onPress={() => setInformation(false)}>
                             <ArrowIcon width={30} height={30} color="#1a1a1a" />
                         </TouchableOpacity>
                         <View style={styles.avatarContainer2}>
@@ -270,7 +278,7 @@ const ProfileScreen = ({ navigation }) => {
                                 rounded={true}
                                 source={thumbnailAvatar ? { uri: thumbnailAvatar } : defaultAvatar}
                             />
-                            <Text style={{ alignSelf: 'center', marginLeft: 15, fontSize: 20, fontWeight: 'bold' }}>{firstName} {lastName}</Text>
+                            <Text style={{ alignSelf: 'center', marginLeft: 15, fontSize: 20, fontWeight: 'bold', color:'white' }}>{firstName} {lastName}</Text>
                         </View>
                     </View>
 
@@ -319,18 +327,18 @@ const styles = StyleSheet.create({
     Button: {
         position: 'absolute',
         top: 10,
-        left: 10,
+        right: 10,
         zIndex: 1,
     },
 
     FisrtRightButton: {
         left: 'auto',
-        right: 50,
+        left: 10,
     },
     SecondRightButton: {
-        left: 'auto',
+        right: 'auto',
         right: 10,
-        top: 10
+        top: 20
     },
     backIcon: {
         width: 30,
@@ -361,17 +369,18 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginTop: 10,
-        color: "red"
     },
     photoButton: {
+        width:140,
         flexDirection: 'row',
         marginTop: 10,
         paddingVertical: 10,
         paddingHorizontal: 25,
         borderRadius: 5,
         backgroundColor: '#fff',
-        borderBottomColor: 'gray',
-        borderBottomWidth: 1,
+        borderBlockColor: 'gray',
+        borderWidth: 1,
+        justifyContent:'center'
     },
     buttonText: {
         marginLeft: 2,
@@ -384,7 +393,8 @@ const styles = StyleSheet.create({
     },
     wallText: {
         fontSize: 14,
-        marginTop: -10
+        marginTop: -10,
+        marginLeft:10
     },
     icon: {
         width: 30,
